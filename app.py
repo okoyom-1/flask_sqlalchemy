@@ -7,6 +7,7 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
 database = SQLAlchemy(app)
+locked_flag = True # переменная для проверки того, вошел пользователь или нет
 
 class Users(database.Model):
     id = database.Column(database.Integer, primary_key=True)
@@ -52,6 +53,26 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/locked')
+def locked():
+    global locked_flag
+    if locked_flag == False:
+        return redirect('/locked')
+    else:
+        return redirect('/register')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # система смотрит в базу данных и находит первое совпадение по email и паролю
+        user = Users.query.filter_by(email=request.form['email'], psw=request.form['psw']).first()
+        if user:
+            global locked_flag
+            locked_flag = False
+            return redirect('/locked')
+
+    return render_template('login.html')
+
 with app.app_context():
     database.create_all()
 
@@ -59,4 +80,6 @@ if __name__ == '__main__':
     
     app.add_url_rule('/', 'index', index)
     app.add_url_rule('/register', 'register', register)
+    app.add_url_rule('/login', 'login', login)
+    app.add_url_rule('/locked', 'locked', locked)
     app.run(debug=True)
