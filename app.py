@@ -57,7 +57,7 @@ def register():
 def locked():
     global locked_flag
     if locked_flag == False:
-        return redirect('/locked')
+        return render_template('locked.html')
     else:
         return redirect('/register')
 
