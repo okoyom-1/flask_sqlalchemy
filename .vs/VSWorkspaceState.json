@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\instance"
   ],
-  "SelectedNode": "\\app.py",
+  "SelectedNode": "\\instance\\database.db",
   "PreviewInSolutionExplorer": false
 }
